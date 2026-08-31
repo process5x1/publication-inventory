@@ -267,8 +267,8 @@ body {
 <div id="page-inventory">
   <div class="inv-wrap">
     <div class="inv-header">
-      <h1 class="inv-h1">Inventory</h1>
-      <p class="inv-subtitle">Track publications on hand.</p>
+      <h1 class="inv-h1" id="inv-page-title">Inventory</h1>
+      <p class="inv-subtitle" id="inv-page-subtitle">Track publications on hand.</p>
     </div>
 
     <!-- Section chooser -->
@@ -430,11 +430,21 @@ var INV_KEY = 'inv_publications_v1';
 function loadInv() { try { return JSON.parse(localStorage.getItem(INV_KEY) || '[]'); } catch (e) { return []; } }
 function saveInv(list) { try { localStorage.setItem(INV_KEY, JSON.stringify(list)); } catch (e) {} }
 
+var INV_SECTION_TITLES = {
+  home: ['Inventory', 'Track publications on hand.'],
+  add: ['Settings', 'Add publications, import/export your data, or bulk-attach photos.'],
+  list: ['Current Inventory', 'Browse everything you’ve added, and amend counts.'],
+  trolley: ['Trolley Arrangement', 'Plan what goes on each shelf of your literature cart.']
+};
+
 function showInvSection(name) {
   document.getElementById('inv-panel-home').style.display = name === 'home' ? '' : 'none';
   document.getElementById('inv-panel-add').style.display = name === 'add' ? '' : 'none';
   document.getElementById('inv-panel-list').style.display = name === 'list' ? '' : 'none';
   document.getElementById('inv-panel-trolley').style.display = name === 'trolley' ? '' : 'none';
+  var titles = INV_SECTION_TITLES[name] || INV_SECTION_TITLES.home;
+  document.getElementById('inv-page-title').textContent = titles[0];
+  document.getElementById('inv-page-subtitle').textContent = titles[1];
   invPushHistory({ section: name });
   if (name === 'list') renderInvList();
   if (name === 'trolley') renderTrolleyList();
