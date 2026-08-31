@@ -293,58 +293,52 @@ body {
     <!-- Settings -->
     <div class="inv-panel" id="inv-panel-add" style="display:none;">
       <div class="inv-card">
-        <p class="inv-hint">Pick a publication below to add it right away (Count starts at 0). Add photos afterward via Bulk Add Photos by Code, or per item in Amend.</p>
+        <p class="inv-hint">Type a title and Add to add one publication, or use "Add all" to load the full list for that category. Either way it's added right away (Count starts at 0). Add photos afterward via Bulk Add Photos by Code, or per item in Amend.</p>
 
-        <label class="inv-label" for="inv-quickpick-book-input">Quick Pick (Book)</label>
-        <select class="inv-input" id="inv-quickpick-book-input" onchange="invApplyQuickPickBook(this)">
-          <option value="">Choose a book…</option>
-        </select>
+        <label class="inv-label" for="inv-newpub-book-input">Book</label>
+        <input type="text" class="inv-input" id="inv-newpub-book-input" placeholder="Title of a new book">
         <div class="inv-btn-row">
+          <button type="button" class="inv-btn" onclick="invAddCustomPub('Book', 'inv-newpub-book-input', 'inv-quickpick-book-msg')">Add</button>
           <button type="button" class="inv-btn" onclick="addAllBookQuickPicks()">Add all 14 books</button>
           <span class="inv-save-msg" id="inv-quickpick-book-msg"></span>
         </div>
 
-        <label class="inv-label" for="inv-quickpick-brochure-input">Quick Pick (Brochure)</label>
-        <select class="inv-input" id="inv-quickpick-brochure-input" onchange="invApplyQuickPickBrochure(this)">
-          <option value="">Choose a brochure…</option>
-        </select>
+        <label class="inv-label" for="inv-newpub-brochure-input">Brochure</label>
+        <input type="text" class="inv-input" id="inv-newpub-brochure-input" placeholder="Title of a new brochure">
         <div class="inv-btn-row">
+          <button type="button" class="inv-btn" onclick="invAddCustomPub('Brochure', 'inv-newpub-brochure-input', 'inv-quickpick-brochure-msg')">Add</button>
           <button type="button" class="inv-btn" onclick="addAllBrochureQuickPicks()">Add all 13 brochures</button>
           <span class="inv-save-msg" id="inv-quickpick-brochure-msg"></span>
         </div>
 
-        <label class="inv-label" for="inv-quickpick-magazine-input">Quick Pick (Magazine)</label>
-        <select class="inv-input" id="inv-quickpick-magazine-input" onchange="invApplyQuickPickMagazine(this)">
-          <option value="">Choose a magazine…</option>
-        </select>
+        <label class="inv-label" for="inv-newpub-magazine-input">Magazine</label>
+        <input type="text" class="inv-input" id="inv-newpub-magazine-input" placeholder="Title of a new magazine">
         <div class="inv-btn-row">
+          <button type="button" class="inv-btn" onclick="invAddCustomPub('Magazines', 'inv-newpub-magazine-input', 'inv-quickpick-magazine-msg')">Add</button>
           <button type="button" class="inv-btn" onclick="addAllMagazineQuickPicks()">Add all 32 magazines</button>
           <span class="inv-save-msg" id="inv-quickpick-magazine-msg"></span>
         </div>
 
-        <label class="inv-label" for="inv-quickpick-card-input">Quick Pick (Contact Card)</label>
-        <select class="inv-input" id="inv-quickpick-card-input" onchange="invApplyQuickPickCard(this)">
-          <option value="">Choose a contact card…</option>
-        </select>
+        <label class="inv-label" for="inv-newpub-card-input">Contact Card</label>
+        <input type="text" class="inv-input" id="inv-newpub-card-input" placeholder="Title of a new contact card">
         <div class="inv-btn-row">
+          <button type="button" class="inv-btn" onclick="invAddCustomPub('Contact Cards', 'inv-newpub-card-input', 'inv-quickpick-card-msg')">Add</button>
           <button type="button" class="inv-btn" onclick="addAllCardQuickPicks()">Add all 4 contact cards</button>
           <span class="inv-save-msg" id="inv-quickpick-card-msg"></span>
         </div>
 
-        <label class="inv-label" for="inv-quickpick-tract-input">Quick Pick (Tract)</label>
-        <select class="inv-input" id="inv-quickpick-tract-input" onchange="invApplyQuickPickTract(this)">
-          <option value="">Choose a tract…</option>
-        </select>
+        <label class="inv-label" for="inv-newpub-tract-input">Tract</label>
+        <input type="text" class="inv-input" id="inv-newpub-tract-input" placeholder="Title of a new tract">
         <div class="inv-btn-row">
+          <button type="button" class="inv-btn" onclick="invAddCustomPub('Tracts', 'inv-newpub-tract-input', 'inv-quickpick-tract-msg')">Add</button>
           <button type="button" class="inv-btn" onclick="addAllTractQuickPicks()">Add all 18 tracts</button>
           <span class="inv-save-msg" id="inv-quickpick-tract-msg"></span>
         </div>
 
-        <label class="inv-label" for="inv-quickpick-bible-input">Quick Pick (Bible)</label>
-        <select class="inv-input" id="inv-quickpick-bible-input" onchange="invApplyQuickPickBible(this)">
-          <option value="">Choose a Bible…</option>
-        </select>
+        <label class="inv-label" for="inv-newpub-bible-input">Bible</label>
+        <input type="text" class="inv-input" id="inv-newpub-bible-input" placeholder="Title of a new Bible">
         <div class="inv-btn-row">
+          <button type="button" class="inv-btn" onclick="invAddCustomPub('Bibles', 'inv-newpub-bible-input', 'inv-quickpick-bible-msg')">Add</button>
           <button type="button" class="inv-btn" onclick="addAllBibleQuickPicks()">Add all 1 Bible</button>
           <span class="inv-save-msg" id="inv-quickpick-bible-msg"></span>
         </div>
@@ -542,31 +536,32 @@ function invCaptureFromCamera() {
 }
 
 
-function invQuickAddOne(pick, category, msgElId) {
+function invAddCustomPub(category, inputId, msgElId) {
+  var input = document.getElementById(inputId);
+  var title = input.value.trim();
   var msg = document.getElementById(msgElId);
-  var list = loadInv();
-  var exists = list.some(function(e) { return (e.code || '').trim().toLowerCase() === pick.code.toLowerCase(); });
-  if (exists) {
-    msg.style.color = '';
-    msg.textContent = '"' + pick.title + '" is already in your inventory.';
-    setTimeout(function() { msg.textContent = ''; }, 3000);
+  if (!title) {
+    msg.style.color = 'var(--inv-remove-text, #b91c1c)';
+    msg.textContent = 'Enter a title first.';
     return;
   }
+  var list = loadInv();
   list.unshift({
     id: Date.now() + '-' + Math.random().toString(36).slice(2, 8),
     pictureFront: null,
     pictureBack: null,
-    title: pick.title,
-    code: pick.code,
+    title: title,
+    code: '',
     volume: '',
     lastCounted: '',
     category: category,
     count: 0
   });
   saveInv(list);
+  input.value = '';
   msg.style.color = '';
-  msg.textContent = 'Added "' + pick.title + '".';
-  setTimeout(function() { if (msg.textContent.indexOf(pick.title) !== -1) msg.textContent = ''; }, 3000);
+  msg.textContent = 'Added "' + title + '".';
+  setTimeout(function() { if (msg.textContent.indexOf(title) !== -1) msg.textContent = ''; }, 3000);
 }
 
 function escInv(s) { return String(s || '').replace(/[&<>"']/g, function(c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
@@ -589,28 +584,6 @@ var INV_BOOK_QUICKPICKS = [
   { code: 'scl', title: 'Scriptures for Christian Living' },
   { code: 'wcg', title: 'Courage' }
 ];
-
-(function() {
-  var sel = document.getElementById('inv-quickpick-book-input');
-  INV_BOOK_QUICKPICKS.forEach(function(b) {
-    var opt = document.createElement('option');
-    opt.value = b.code;
-    opt.textContent = b.title + ' (' + b.code + ')';
-    sel.appendChild(opt);
-  });
-  var otherOpt = document.createElement('option');
-  otherOpt.value = '__other__';
-  otherOpt.textContent = 'Others';
-  sel.appendChild(otherOpt);
-})();
-
-function invApplyQuickPickBook(sel) {
-  if (!sel.value || sel.value === '__other__') { sel.value = ''; return; }
-  var pick = INV_BOOK_QUICKPICKS.find(function(b) { return b.code === sel.value; });
-  if (!pick) return;
-  invQuickAddOne(pick, 'Book', 'inv-quickpick-book-msg');
-  sel.value = '';
-}
 
 function addAllBookQuickPicks() {
   var msg = document.getElementById('inv-quickpick-book-msg');
@@ -657,28 +630,6 @@ var INV_BROCHURE_QUICKPICKS = [
   { code: 'wfg', title: 'Wisdom From the Gospels' },
   { code: 'ypq', title: 'Questions' }
 ];
-
-(function() {
-  var sel = document.getElementById('inv-quickpick-brochure-input');
-  INV_BROCHURE_QUICKPICKS.forEach(function(b) {
-    var opt = document.createElement('option');
-    opt.value = b.code;
-    opt.textContent = b.title + ' (' + b.code + ')';
-    sel.appendChild(opt);
-  });
-  var otherOpt = document.createElement('option');
-  otherOpt.value = '__other__';
-  otherOpt.textContent = 'Others';
-  sel.appendChild(otherOpt);
-})();
-
-function invApplyQuickPickBrochure(sel) {
-  if (!sel.value || sel.value === '__other__') { sel.value = ''; return; }
-  var pick = INV_BROCHURE_QUICKPICKS.find(function(b) { return b.code === sel.value; });
-  if (!pick) return;
-  invQuickAddOne(pick, 'Brochure', 'inv-quickpick-brochure-msg');
-  sel.value = '';
-}
 
 function addAllBrochureQuickPicks() {
   var msg = document.getElementById('inv-quickpick-brochure-msg');
@@ -745,28 +696,6 @@ var INV_MAGAZINE_QUICKPICKS = [
   { code: 'wp25.1', title: 'Watchtower (Public)' }
 ];
 
-(function() {
-  var sel = document.getElementById('inv-quickpick-magazine-input');
-  INV_MAGAZINE_QUICKPICKS.forEach(function(b) {
-    var opt = document.createElement('option');
-    opt.value = b.code;
-    opt.textContent = b.title + ' (' + b.code + ')';
-    sel.appendChild(opt);
-  });
-  var otherOpt = document.createElement('option');
-  otherOpt.value = '__other__';
-  otherOpt.textContent = 'Others';
-  sel.appendChild(otherOpt);
-})();
-
-function invApplyQuickPickMagazine(sel) {
-  if (!sel.value || sel.value === '__other__') { sel.value = ''; return; }
-  var pick = INV_MAGAZINE_QUICKPICKS.find(function(b) { return b.code === sel.value; });
-  if (!pick) return;
-  invQuickAddOne(pick, 'Magazines', 'inv-quickpick-magazine-msg');
-  sel.value = '';
-}
-
 function addAllMagazineQuickPicks() {
   var msg = document.getElementById('inv-quickpick-magazine-msg');
   var list = loadInv();
@@ -803,28 +732,6 @@ var INV_CARD_QUICKPICKS = [
   { code: 'jwcd9', title: 'Contact card for free Bible course' },
   { code: 'jwcd10', title: 'Contact card for free Bible course' }
 ];
-
-(function() {
-  var sel = document.getElementById('inv-quickpick-card-input');
-  INV_CARD_QUICKPICKS.forEach(function(b) {
-    var opt = document.createElement('option');
-    opt.value = b.code;
-    opt.textContent = b.title + ' (' + b.code + ')';
-    sel.appendChild(opt);
-  });
-  var otherOpt = document.createElement('option');
-  otherOpt.value = '__other__';
-  otherOpt.textContent = 'Others';
-  sel.appendChild(otherOpt);
-})();
-
-function invApplyQuickPickCard(sel) {
-  if (!sel.value || sel.value === '__other__') { sel.value = ''; return; }
-  var pick = INV_CARD_QUICKPICKS.find(function(b) { return b.code === sel.value; });
-  if (!pick) return;
-  invQuickAddOne(pick, 'Contact Cards', 'inv-quickpick-card-msg');
-  sel.value = '';
-}
 
 function addAllCardQuickPicks() {
   var msg = document.getElementById('inv-quickpick-card-msg');
@@ -877,28 +784,6 @@ var INV_TRACT_QUICKPICKS = [
   { code: 'T-sfr', title: 'Suffering' }
 ];
 
-(function() {
-  var sel = document.getElementById('inv-quickpick-tract-input');
-  INV_TRACT_QUICKPICKS.forEach(function(b) {
-    var opt = document.createElement('option');
-    opt.value = b.code;
-    opt.textContent = b.title + ' (' + b.code + ')';
-    sel.appendChild(opt);
-  });
-  var otherOpt = document.createElement('option');
-  otherOpt.value = '__other__';
-  otherOpt.textContent = 'Others';
-  sel.appendChild(otherOpt);
-})();
-
-function invApplyQuickPickTract(sel) {
-  if (!sel.value || sel.value === '__other__') { sel.value = ''; return; }
-  var pick = INV_TRACT_QUICKPICKS.find(function(b) { return b.code === sel.value; });
-  if (!pick) return;
-  invQuickAddOne(pick, 'Tracts', 'inv-quickpick-tract-msg');
-  sel.value = '';
-}
-
 function addAllTractQuickPicks() {
   var msg = document.getElementById('inv-quickpick-tract-msg');
   var list = loadInv();
@@ -932,28 +817,6 @@ function addAllTractQuickPicks() {
 var INV_BIBLE_QUICKPICKS = [
   { code: 'nwt', title: 'New World Translation' }
 ];
-
-(function() {
-  var sel = document.getElementById('inv-quickpick-bible-input');
-  INV_BIBLE_QUICKPICKS.forEach(function(b) {
-    var opt = document.createElement('option');
-    opt.value = b.code;
-    opt.textContent = b.title + ' (' + b.code + ')';
-    sel.appendChild(opt);
-  });
-  var otherOpt = document.createElement('option');
-  otherOpt.value = '__other__';
-  otherOpt.textContent = 'Others';
-  sel.appendChild(otherOpt);
-})();
-
-function invApplyQuickPickBible(sel) {
-  if (!sel.value || sel.value === '__other__') { sel.value = ''; return; }
-  var pick = INV_BIBLE_QUICKPICKS.find(function(b) { return b.code === sel.value; });
-  if (!pick) return;
-  invQuickAddOne(pick, 'Bibles', 'inv-quickpick-bible-msg');
-  sel.value = '';
-}
 
 function addAllBibleQuickPicks() {
   var msg = document.getElementById('inv-quickpick-bible-msg');
