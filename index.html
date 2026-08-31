@@ -271,22 +271,16 @@ body {
 
     <!-- Section chooser -->
     <div class="inv-home-grid" id="inv-panel-home">
-      <button class="inv-box" onclick="showInvSection('add')">
-        <div class="inv-box-icon">➕</div>
-        <div class="inv-box-title">Add Publication</div>
-        <div class="inv-box-desc">Add a new publication, with a photo if you have one.</div>
-      </button>
-
       <button class="inv-box" onclick="showInvSection('list')">
         <div class="inv-box-icon">📦</div>
         <div class="inv-box-title">View Current Inventory</div>
         <div class="inv-box-desc">Browse everything you've added, and amend counts.</div>
       </button>
 
-      <button class="inv-box" onclick="showInvSection('io')">
-        <div class="inv-box-icon">⇅</div>
-        <div class="inv-box-title">Import/Export</div>
-        <div class="inv-box-desc">Move your inventory to another device, photos included.</div>
+      <button class="inv-box" onclick="showInvSection('add')">
+        <div class="inv-box-icon">⚙️</div>
+        <div class="inv-box-title">Settings</div>
+        <div class="inv-box-desc">Add publications, import or export your data, and bulk-attach photos.</div>
       </button>
 
       <button class="inv-box" onclick="showInvSection('trolley')">
@@ -296,14 +290,14 @@ body {
       </button>
     </div>
 
-    <!-- Add Publication -->
+    <!-- Settings -->
     <div class="inv-panel" id="inv-panel-add" style="display:none;">
       <div class="inv-card">
         <p class="inv-hint">Pick a publication below to add it right away (Count starts at 0). Add photos afterward via Bulk Add Photos by Code, or per item in Amend.</p>
 
         <label class="inv-label" for="inv-quickpick-book-input">Quick Pick (Book)</label>
         <select class="inv-input" id="inv-quickpick-book-input" onchange="invApplyQuickPickBook(this)">
-          <option value="">Choose a book, or fill in manually below…</option>
+          <option value="">Choose a book…</option>
         </select>
         <div class="inv-btn-row">
           <button type="button" class="inv-btn" onclick="addAllBookQuickPicks()">Add all 14 books</button>
@@ -312,7 +306,7 @@ body {
 
         <label class="inv-label" for="inv-quickpick-brochure-input">Quick Pick (Brochure)</label>
         <select class="inv-input" id="inv-quickpick-brochure-input" onchange="invApplyQuickPickBrochure(this)">
-          <option value="">Choose a brochure, or fill in manually below…</option>
+          <option value="">Choose a brochure…</option>
         </select>
         <div class="inv-btn-row">
           <button type="button" class="inv-btn" onclick="addAllBrochureQuickPicks()">Add all 13 brochures</button>
@@ -321,7 +315,7 @@ body {
 
         <label class="inv-label" for="inv-quickpick-magazine-input">Quick Pick (Magazine)</label>
         <select class="inv-input" id="inv-quickpick-magazine-input" onchange="invApplyQuickPickMagazine(this)">
-          <option value="">Choose a magazine, or fill in manually below…</option>
+          <option value="">Choose a magazine…</option>
         </select>
         <div class="inv-btn-row">
           <button type="button" class="inv-btn" onclick="addAllMagazineQuickPicks()">Add all 32 magazines</button>
@@ -330,7 +324,7 @@ body {
 
         <label class="inv-label" for="inv-quickpick-card-input">Quick Pick (Contact Card)</label>
         <select class="inv-input" id="inv-quickpick-card-input" onchange="invApplyQuickPickCard(this)">
-          <option value="">Choose a contact card, or fill in manually below…</option>
+          <option value="">Choose a contact card…</option>
         </select>
         <div class="inv-btn-row">
           <button type="button" class="inv-btn" onclick="addAllCardQuickPicks()">Add all 4 contact cards</button>
@@ -339,7 +333,7 @@ body {
 
         <label class="inv-label" for="inv-quickpick-tract-input">Quick Pick (Tract)</label>
         <select class="inv-input" id="inv-quickpick-tract-input" onchange="invApplyQuickPickTract(this)">
-          <option value="">Choose a tract, or fill in manually below…</option>
+          <option value="">Choose a tract…</option>
         </select>
         <div class="inv-btn-row">
           <button type="button" class="inv-btn" onclick="addAllTractQuickPicks()">Add all 18 tracts</button>
@@ -348,36 +342,14 @@ body {
 
         <label class="inv-label" for="inv-quickpick-bible-input">Quick Pick (Bible)</label>
         <select class="inv-input" id="inv-quickpick-bible-input" onchange="invApplyQuickPickBible(this)">
-          <option value="">Choose a Bible, or fill in manually below…</option>
+          <option value="">Choose a Bible…</option>
         </select>
         <div class="inv-btn-row">
           <button type="button" class="inv-btn" onclick="addAllBibleQuickPicks()">Add all 1 Bible</button>
           <span class="inv-save-msg" id="inv-quickpick-bible-msg"></span>
         </div>
-
-        <div class="inv-btn-row">
-          <button class="inv-btn" onclick="showInvSection('home')">&larr; Back</button>
-        </div>
       </div>
-    </div>
 
-    <!-- Inventory list -->
-    <div class="inv-panel" id="inv-panel-list" style="display:none;">
-      <button class="inv-back" onclick="showInvSection('home')">&larr; Back</button>
-      <div class="inv-list-head">
-        <span class="inv-panel-count" id="inv-count"></span>
-        <div class="inv-zoom-control">
-          <span class="inv-zoom-label">⊟</span>
-          <input type="range" id="inv-zoom-slider" min="1" max="4" step="1" value="2" oninput="invSetGridCols(this.value)">
-          <span class="inv-zoom-label">⊞</span>
-        </div>
-      </div>
-      <div id="inv-list"></div>
-    </div>
-
-    <!-- Import/Export -->
-    <div class="inv-panel" id="inv-panel-io" style="display:none;">
-      <button class="inv-back" onclick="showInvSection('home')">&larr; Back</button>
       <div class="inv-card">
         <div class="inv-label">Export</div>
         <p class="inv-hint">Downloads a JSON file with all publications, including photos, so you can move your inventory to another device without retaking pictures.</p>
@@ -404,7 +376,26 @@ body {
         </div>
         <span class="inv-save-msg" id="inv-bulk-photo-msg"></span>
       </div>
+
+      <div class="inv-btn-row">
+        <button class="inv-btn" onclick="showInvSection('home')">&larr; Back</button>
+      </div>
     </div>
+
+    <!-- Inventory list -->
+    <div class="inv-panel" id="inv-panel-list" style="display:none;">
+      <button class="inv-back" onclick="showInvSection('home')">&larr; Back</button>
+      <div class="inv-list-head">
+        <span class="inv-panel-count" id="inv-count"></span>
+        <div class="inv-zoom-control">
+          <span class="inv-zoom-label">⊟</span>
+          <input type="range" id="inv-zoom-slider" min="1" max="4" step="1" value="2" oninput="invSetGridCols(this.value)">
+          <span class="inv-zoom-label">⊞</span>
+        </div>
+      </div>
+      <div id="inv-list"></div>
+    </div>
+
 
     <!-- Trolley Arrangement -->
     <div class="inv-panel" id="inv-panel-trolley" style="display:none;">
@@ -466,7 +457,6 @@ function showInvSection(name) {
   document.getElementById('inv-panel-home').style.display = name === 'home' ? '' : 'none';
   document.getElementById('inv-panel-add').style.display = name === 'add' ? '' : 'none';
   document.getElementById('inv-panel-list').style.display = name === 'list' ? '' : 'none';
-  document.getElementById('inv-panel-io').style.display = name === 'io' ? '' : 'none';
   document.getElementById('inv-panel-trolley').style.display = name === 'trolley' ? '' : 'none';
   invPushHistory({ section: name });
   if (name === 'list') renderInvList();
@@ -1120,7 +1110,7 @@ function renderInvList() {
   var list = loadInv();
   var wrap = document.getElementById('inv-list');
   document.getElementById('inv-count').textContent = list.length + (list.length === 1 ? ' publication' : ' publications');
-  if (!list.length) { wrap.innerHTML = '<div class="inv-empty">No publications yet. Go back and use <strong>Add Publication</strong>.</div>'; return; }
+  if (!list.length) { wrap.innerHTML = '<div class="inv-empty">No publications yet. Go back and use <strong>Settings</strong> to add some.</div>'; return; }
   wrap.innerHTML = '';
 
   var groupOrder = INV_CATEGORIES.concat(['Uncategorized']);
