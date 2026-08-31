@@ -166,6 +166,13 @@ body {
   padding: 4px 0; border-bottom: 1px solid var(--inv-border);
 }
 #page-inventory .inv-history-row:last-child { border-bottom: none; }
+#page-inventory .inv-datemap-list { margin-top: 8px; }
+#page-inventory .inv-datemap-row {
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  font-size: 12px; color: var(--inv-text); padding: 5px 0; border-bottom: 1px solid var(--inv-border);
+}
+#page-inventory .inv-datemap-row:last-child { border-bottom: none; }
+#page-inventory .inv-datemap-row button { flex-shrink: 0; }
 #page-inventory .inv-empty { text-align: center; color: var(--inv-text-faint); font-size: 13px; padding: 2rem 1rem; line-height: 1.6; grid-column: 1 / -1; }
 
 .inv-camera-modal {
@@ -345,12 +352,21 @@ body {
         </div>
         <div class="inv-card">
           <div class="inv-label">Bulk Add Photos by Code</div>
-          <p class="inv-hint">Select multiple photos at once. The part of the filename before the first underscore is matched to a publication's Code — e.g. "bhs.jpg" or "lr_E_lg.jpg" both match Code "lr"/"bhs". Matching photos are set as that entry's Front Cover.</p>
+          <p class="inv-hint">Select multiple photos at once. For a plain filename like "bhs.jpg" or "lr_E_lg.jpg", the code before the underscores is matched directly. For a dated filename like "g_E_201911_lg.jpg" (jw.org magazine downloads), the date is looked up in the table below first — add a mapping once and it'll be used every time.</p>
           <div class="inv-btn-row">
             <input type="file" class="inv-file-input" accept="image/*" multiple id="inv-bulk-photo-input" onchange="bulkAddPhotosByCode(this.files)">
             <label class="inv-btn" for="inv-bulk-photo-input">Choose Photos</label>
           </div>
           <span class="inv-save-msg" id="inv-bulk-photo-msg"></span>
+
+          <label class="inv-label" for="inv-datemap-date-input">Magazine date code → app code</label>
+          <div class="inv-btn-row">
+            <input type="text" class="inv-input" id="inv-datemap-date-input" placeholder="Date code, e.g. 201911" style="flex:1;min-width:100px;">
+            <input type="text" class="inv-input" id="inv-datemap-appcode-input" placeholder="App code, e.g. g19.3" style="flex:1;min-width:100px;">
+            <button type="button" class="inv-btn" onclick="invAddDateMapping()">Add</button>
+          </div>
+          <span class="inv-save-msg" id="inv-datemap-msg"></span>
+          <div id="inv-datemap-list"></div>
         </div>
       </div>
 
@@ -448,6 +464,7 @@ function showInvSection(name) {
   invPushHistory({ section: name });
   if (name === 'list') renderInvList();
   if (name === 'trolley') renderTrolleyList();
+  if (name === 'add') renderDateMapList();
 }
 
 // ── Guided camera capture ──
@@ -1407,6 +1424,52 @@ function invReadFileAsDataURL(file) {
   });
 }
 
+var INV_DATEMAP_KEY = 'inv_magazine_date_map_v1';
+function loadMagazineDateMap() { try { return JSON.parse(localStorage.getItem(INV_DATEMAP_KEY) || '{}'); } catch (e) { return {}; } }
+function saveMagazineDateMap(map) { try { localStorage.setItem(INV_DATEMAP_KEY, JSON.stringify(map)); } catch (e) {} }
+
+function renderDateMapList() {
+  var wrap = document.getElementById('inv-datemap-list');
+  if (!wrap) return;
+  var map = loadMagazineDateMap();
+  var dates = Object.keys(map).sort();
+  if (!dates.length) { wrap.innerHTML = '<p class="inv-hint">No mappings yet.</p>'; return; }
+  wrap.innerHTML = '<div class="inv-datemap-rows">' + dates.map(function(d) {
+    return '<div class="inv-datemap-row"><span>' + escInv(d) + ' → ' + escInv(map[d]) + '</span>' +
+      '<button type="button" class="inv-btn inv-btn-remove" data-datemap-delete="' + escInv(d) + '">Delete</button></div>';
+  }).join('') + '</div>';
+  wrap.querySelectorAll('[data-datemap-delete]').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var m = loadMagazineDateMap();
+      delete m[btn.dataset.datemapDelete];
+      saveMagazineDateMap(m);
+      renderDateMapList();
+    });
+  });
+}
+
+function invAddDateMapping() {
+  var dateInput = document.getElementById('inv-datemap-date-input');
+  var codeInput = document.getElementById('inv-datemap-appcode-input');
+  var msg = document.getElementById('inv-datemap-msg');
+  var date = dateInput.value.trim();
+  var code = codeInput.value.trim();
+  if (!date || !code) {
+    msg.style.color = 'var(--inv-remove-text, #b91c1c)';
+    msg.textContent = 'Enter both a date code and an app code.';
+    return;
+  }
+  var map = loadMagazineDateMap();
+  map[date] = code;
+  saveMagazineDateMap(map);
+  dateInput.value = '';
+  codeInput.value = '';
+  msg.style.color = '';
+  msg.textContent = 'Saved "' + date + '" → "' + code + '".';
+  setTimeout(function() { if (msg.textContent.indexOf(date) !== -1) msg.textContent = ''; }, 3000);
+  renderDateMapList();
+}
+
 function bulkAddPhotosByCode(fileList) {
   var msg = document.getElementById('inv-bulk-photo-msg');
   var files = Array.prototype.slice.call(fileList || []);
@@ -1417,6 +1480,8 @@ function bulkAddPhotosByCode(fileList) {
   var list = loadInv();
   var matchedCount = 0;
   var unmatched = [];
+
+  var dateMap = loadMagazineDateMap();
 
   var promises = files.map(function(file) {
     var base = file.name.replace(/\.[^/.]+$/, '').trim();
@@ -1429,7 +1494,11 @@ function bulkAddPhotosByCode(fileList) {
       for (var i = 1; i < parts.length; i++) {
         if (/^\d+$/.test(parts[i])) { datePart = parts[i]; break; }
       }
-      code = parts[0] + (datePart || '');
+      if (datePart && dateMap[datePart]) {
+        code = dateMap[datePart];
+      } else {
+        code = parts[0] + (datePart || '');
+      }
     }
     code = code.toLowerCase();
     return invReadFileAsDataURL(file).then(function(dataUrl) {
