@@ -1420,8 +1420,18 @@ function bulkAddPhotosByCode(fileList) {
 
   var promises = files.map(function(file) {
     var base = file.name.replace(/\.[^/.]+$/, '').trim();
-    var underscoreIdx = base.indexOf('_');
-    var code = (underscoreIdx !== -1 ? base.slice(0, underscoreIdx) : base).toLowerCase();
+    var parts = base.split('_');
+    var code;
+    if (parts.length <= 1) {
+      code = base;
+    } else {
+      var datePart = null;
+      for (var i = 1; i < parts.length; i++) {
+        if (/^\d+$/.test(parts[i])) { datePart = parts[i]; break; }
+      }
+      code = parts[0] + (datePart || '');
+    }
+    code = code.toLowerCase();
     return invReadFileAsDataURL(file).then(function(dataUrl) {
       var matches = list.filter(function(e) { return (e.code || '').trim().toLowerCase() === code; });
       if (matches.length) {
