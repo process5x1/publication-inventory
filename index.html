@@ -94,6 +94,8 @@ body {
   background: var(--inv-surface); border: 1.5px solid var(--inv-border); border-radius: var(--inv-radius-lg);
   padding: 1.25rem; margin-bottom: 1rem;
 }
+#page-inventory .inv-io-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 1rem; }
+#page-inventory .inv-io-grid .inv-card { min-width: 0; margin-bottom: 0; }
 #page-inventory .inv-label { display: block; font-size: 12px; font-weight: 600; color: var(--inv-text-muted); text-transform: uppercase; letter-spacing: 0.06em; margin: 0.9rem 0 6px; }
 #page-inventory .inv-label:first-child { margin-top: 0; }
 #page-inventory .inv-input {
@@ -323,31 +325,33 @@ body {
         <span class="inv-save-msg" id="inv-newpub-msg"></span>
       </div>
 
-      <div class="inv-card">
-        <div class="inv-label">Export</div>
-        <p class="inv-hint">Downloads a JSON file with all publications, including photos, so you can move your inventory to another device without retaking pictures.</p>
-        <div class="inv-btn-row">
-          <button class="inv-btn inv-btn-primary" onclick="exportInv()">Download export</button>
+      <div class="inv-io-grid">
+        <div class="inv-card">
+          <div class="inv-label">Export</div>
+          <p class="inv-hint">Downloads a JSON file with all publications, including photos, so you can move your inventory to another device without retaking pictures.</p>
+          <div class="inv-btn-row">
+            <button class="inv-btn inv-btn-primary" onclick="exportInv()">Download export</button>
+          </div>
         </div>
-      </div>
-      <div class="inv-card">
-        <div class="inv-label">Import</div>
-        <p class="inv-hint">Choose a previously exported JSON file to add its publications here.</p>
-        <div class="inv-btn-row">
-          <input type="file" class="inv-file-input" accept="application/json" id="inv-import-input" onchange="document.getElementById('inv-import-name').textContent=this.files[0]?this.files[0].name:''; importInv(this.files[0])">
-          <label class="inv-btn" for="inv-import-input">Choose File</label>
-          <span class="inv-file-name" id="inv-import-name"></span>
+        <div class="inv-card">
+          <div class="inv-label">Import</div>
+          <p class="inv-hint">Choose a previously exported JSON file to add its publications here.</p>
+          <div class="inv-btn-row">
+            <input type="file" class="inv-file-input" accept="application/json" id="inv-import-input" onchange="document.getElementById('inv-import-name').textContent=this.files[0]?this.files[0].name:''; importInv(this.files[0])">
+            <label class="inv-btn" for="inv-import-input">Choose File</label>
+            <span class="inv-file-name" id="inv-import-name"></span>
+          </div>
+          <span class="inv-save-msg" id="inv-import-msg"></span>
         </div>
-        <span class="inv-save-msg" id="inv-import-msg"></span>
-      </div>
-      <div class="inv-card">
-        <div class="inv-label">Bulk Add Photos by Code</div>
-        <p class="inv-hint">Select multiple photos at once, each named after a publication's Code (e.g. "bhs.jpg" matches the entry with Code "bhs"). Matching photos are set as that entry's Front Cover.</p>
-        <div class="inv-btn-row">
-          <input type="file" class="inv-file-input" accept="image/*" multiple id="inv-bulk-photo-input" onchange="bulkAddPhotosByCode(this.files)">
-          <label class="inv-btn" for="inv-bulk-photo-input">Choose Photos</label>
+        <div class="inv-card">
+          <div class="inv-label">Bulk Add Photos by Code</div>
+          <p class="inv-hint">Select multiple photos at once, each named after a publication's Code (e.g. "bhs.jpg" matches the entry with Code "bhs"). Matching photos are set as that entry's Front Cover.</p>
+          <div class="inv-btn-row">
+            <input type="file" class="inv-file-input" accept="image/*" multiple id="inv-bulk-photo-input" onchange="bulkAddPhotosByCode(this.files)">
+            <label class="inv-btn" for="inv-bulk-photo-input">Choose Photos</label>
+          </div>
+          <span class="inv-save-msg" id="inv-bulk-photo-msg"></span>
         </div>
-        <span class="inv-save-msg" id="inv-bulk-photo-msg"></span>
       </div>
 
       <div class="inv-btn-row">
